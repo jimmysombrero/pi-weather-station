@@ -11,6 +11,7 @@ const SPEED_UNIT_STORAGE_KEY = "speedUnit";
 const LENGTH_UNIT_STORAGE_KEY = "lengthUnit";
 const CLOCK_UNIT_STORAGE_KEY = "clockTime";
 const MOUSE_HIDE_STORAGE_KEY = "mouseHide";
+const WEATHER_API_URL = `https://api.tomorrow.io/v4/timelines?apikey=`;
 
 /**
  * App context provider
@@ -313,12 +314,8 @@ export function AppContextProvider({ children }) {
       "precipitationProbability",
       "precipitationIntensity",
       "windSpeed",
-    ].join("%2c");
-
-    const endTime = new Date(
-      new Date().getTime() + 60 * 60 * 23 * 1000
-    ).toISOString();
-
+    ];
+    
     return new Promise((resolve, reject) => {
       if (!coords) {
         setHourlyWeatherDataErr(true);
@@ -330,9 +327,24 @@ export function AppContextProvider({ children }) {
         return reject("Missing weather API key");
       }
 
+      const data = {
+        location: `${latitude},${longitude}`,
+        fields: fields,
+        units: 'metric',
+        timesteps: ['1h'],
+        startTime: 'now',
+        endTime: 'nowPlus1h'
+      };
+
+      const headers = {
+        accept: 'application/json',
+        'Accept-Encoding': 'deflate, gzip, br',
+        'content-type': 'application/json'
+      };
+
       axios
-        .get(
-          `https://data.climacell.co/v4/timelines?location=${latitude}%2C${longitude}&fields=${fields}&timesteps=1h&apikey=${weatherApiKey}&endTime=${endTime}`
+        .post(
+          `${WEATHER_API_URL}${weatherApiKey}`, data, { headers: headers }
         )
         .then((res) => {
           if (!res) {
@@ -371,11 +383,7 @@ export function AppContextProvider({ children }) {
       "precipitationProbability",
       "precipitationIntensity",
       "windSpeed",
-    ].join("%2c");
-
-    const endTime = new Date(
-      new Date().getTime() + 4 * 60 * 60 * 24 * 1000
-    ).toISOString();
+    ];
 
     return new Promise((resolve, reject) => {
       if (!coords) {
@@ -387,9 +395,25 @@ export function AppContextProvider({ children }) {
         setSettingsMenuOpen(true);
         return reject("Missing weather API key");
       }
+
+      const data = {
+        location: `${latitude},${longitude}`,
+        fields: fields,
+        units: 'metric',
+        timesteps: ['1d'],
+        endTime: 'nowPlus28h',
+        dailyStartHour: 6
+      };
+
+      const headers = {
+        accept: 'application/json',
+        'Accept-Encoding': 'deflate, gzip, br',
+        'content-type': 'application/json'
+      };
+
       axios
-        .get(
-          `https://data.climacell.co/v4/timelines?location=${latitude}%2C${longitude}&fields=${fields}&timesteps=1d&apikey=${weatherApiKey}&endTime=${endTime}`
+        .post(
+          `${WEATHER_API_URL}${weatherApiKey}`, data, { headers: headers }
         )
         .then((res) => {
           if (!res) {
@@ -465,7 +489,7 @@ export function AppContextProvider({ children }) {
       "precipitationProbability",
       "cloudCover",
       "weatherCode",
-    ].join("%2c");
+    ];
     return new Promise((resolve, reject) => {
       if (!coords) {
         setCurrentWeatherDataErr(true);
@@ -477,9 +501,22 @@ export function AppContextProvider({ children }) {
         return reject("Missing weather API key");
       }
 
+      const data = {
+        location: `${latitude},${longitude}`,
+        fields: fields,
+        units: 'metric',
+        timesteps: ['current']
+      };
+
+      const headers = {
+        accept: 'application/json',
+        'Accept-Encoding': 'deflate, gzip, br',
+        'content-type': 'application/json'
+      };
+
       axios
-        .get(
-          `https://data.climacell.co/v4/timelines?location=${latitude}%2C${longitude}&fields=${fields}&timesteps=current&apikey=${weatherApiKey}`
+        .post(
+          `${WEATHER_API_URL}${weatherApiKey}`, data, { headers: headers }
         )
         .then((res) => {
           if (!res) {
