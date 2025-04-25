@@ -333,7 +333,7 @@ export function AppContextProvider({ children }) {
         units: 'metric',
         timesteps: ['1h'],
         startTime: 'now',
-        endTime: 'nowPlus1h'
+        endTime: 'nowPlus23h'
       };
 
       const headers = {
