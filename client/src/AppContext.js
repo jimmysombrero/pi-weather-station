@@ -401,7 +401,7 @@ export function AppContextProvider({ children }) {
         fields: fields,
         units: 'metric',
         timesteps: ['1d'],
-        endTime: 'nowPlus28h',
+        endTime: 'nowPlus4d',
         dailyStartHour: 6
       };
 
